@@ -15,6 +15,7 @@
         <module>little-rpc-server</module>
         <module>little-rpc-transport</module>
         <module>little-rpc-client</module>
+        <module>little-rpc-demo</module>
     </modules>
 
     <properties>

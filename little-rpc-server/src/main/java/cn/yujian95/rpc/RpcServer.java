@@ -57,6 +57,10 @@ public class RpcServer {
         }
     };
 
+    public RpcServer() {
+        this.config = new RpcServerConfig();
+    }
+
     public RpcServer(RpcServerConfig config) {
         this.config = config;
         this.net = ReflectionUtils.newInstance(config.getTransportServerClass());

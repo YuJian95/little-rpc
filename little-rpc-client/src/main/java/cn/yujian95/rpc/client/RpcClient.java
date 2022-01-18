@@ -15,6 +15,10 @@ public class RpcClient {
     private Decoder decoder;
     private TransportSelector selector;
 
+    public RpcClient(){
+        this.config = new RpcClientConfig();
+    }
+
     public RpcClient(RpcClientConfig config) {
         this.config = config;
 
