@@ -36,7 +36,7 @@ public class ReflectionUtils {
      * @param clazz 类
      * @return 当前类声明的共有方法
      */
-    public static Method[] getPublicMethods(Class clazz) {
+    public static <T> Method[] getPublicMethods(Class<T> clazz) {
         Method[] methods = clazz.getDeclaredMethods();
         List<Method> publicMethods = new ArrayList<>();
 
