@@ -56,10 +56,6 @@ public class HTTPTransportClient implements TransportClient {
             }
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
-        } finally {
-            if (httpConn != null) {
-                httpConn.disconnect();
-            }
         }
     }
 

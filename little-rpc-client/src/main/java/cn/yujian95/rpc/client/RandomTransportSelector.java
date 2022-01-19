@@ -15,6 +15,8 @@ import java.util.Random;
 @Slf4j
 public class RandomTransportSelector implements TransportSelector {
 
+    private static final Random RAND = new Random();
+
     /**
      * 已经连接好的client
      */
@@ -52,14 +54,14 @@ public class RandomTransportSelector implements TransportSelector {
      */
     @Override
     public synchronized TransportClient select() {
-        int i = new Random().nextInt(clients.size());
+        int i = RAND.nextInt(clients.size());
         return clients.get(i);
     }
 
     /**
-     * 发布连接
+     * 释放用完的client
      *
-     * @param client 发布客户端
+     * @param client 释放客户端
      */
     @Override
     public synchronized void release(TransportClient client) {

@@ -58,14 +58,21 @@ public class RpcServer {
     };
 
     public RpcServer() {
-        this.config = new RpcServerConfig();
+        this(new RpcServerConfig());
     }
 
     public RpcServer(RpcServerConfig config) {
         this.config = config;
+
+        // net
         this.net = ReflectionUtils.newInstance(config.getTransportServerClass());
+        this.net.init(config.getPort(),this.handler);
+
+        // codec
         this.encoder = ReflectionUtils.newInstance(config.getEncoderClass());
         this.decoder = ReflectionUtils.newInstance(config.getDecoderClass());
+
+        // service
         this.serviceManager = new ServiceManager();
         this.serviceInvoker = new ServiceInvoker();
     }

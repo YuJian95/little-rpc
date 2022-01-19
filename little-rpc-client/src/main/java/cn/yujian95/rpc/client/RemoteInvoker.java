@@ -91,7 +91,7 @@ public class RemoteInvoker implements InvocationHandler {
         Response response = invokeRemote(request);
 
         if (response == null || response.getCode() != 0) {
-            throw new IllegalAccessException("fail to invoke remote: " + response);
+            throw new IllegalStateException("fail to invoke remote: " + response);
         }
 
         return response.getData();
@@ -101,7 +101,6 @@ public class RemoteInvoker implements InvocationHandler {
         TransportClient client = null;
         Response response = null;
         try {
-
             client = selector.select();
 
             byte[] outBytes = encoder.encode(request);

@@ -26,7 +26,7 @@ public interface TransportSelector {
     TransportClient select();
 
     /**
-     * 释放连接
+     * 释放用完的client
      *
      * @param client 释放客户端
      */
