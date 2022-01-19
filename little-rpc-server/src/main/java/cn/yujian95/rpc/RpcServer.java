@@ -5,6 +5,7 @@ import cn.yujian95.rpc.codec.Encoder;
 import cn.yujian95.rpc.common.utils.ReflectionUtils;
 import cn.yujian95.rpc.transport.RequestHandler;
 import cn.yujian95.rpc.transport.TransportServer;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 
@@ -17,6 +18,7 @@ import java.io.OutputStream;
  * @date 2022/1/18
  */
 @Slf4j
+@Getter
 public class RpcServer {
 
     private RpcServerConfig config;
@@ -26,33 +28,33 @@ public class RpcServer {
     private ServiceManager serviceManager;
     private ServiceInvoker serviceInvoker;
 
-    private RequestHandler handler = new RequestHandler() {
-        @Override
-        public void onRequest(InputStream receive, OutputStream toResponse) {
-            Response response = new Response();
+    /**
+     * 重写 void onRequest(InputStream receive, OutputStream toResponse)
+     */
+    private RequestHandler handler = (InputStream receive, OutputStream toResponse) -> {
+        Response response = new Response();
 
+        try {
+            byte[] inBytes = IOUtils.readFully(receive, receive.available());
+
+            Request request = decoder.decode(inBytes, Request.class);
+            log.info("get request: {}", request);
+            ServiceInstance serviceInstance = serviceManager.lookup(request);
+
+            Object result = serviceInvoker.invoker(serviceInstance, request);
+            response.setData(result);
+
+        } catch (IOException e) {
+            log.warn(e.getMessage(), e);
+            response.setCode(1);
+            response.setMessage("RpcServer got error: " + e.getClass().getName() + " " + e.getMessage());
+        } finally {
             try {
-                byte[] inBytes = IOUtils.readFully(receive, receive.available());
-
-                Request request = decoder.decode(inBytes, Request.class);
-                log.info("get request: {}", request);
-                ServiceInstance serviceInstance = serviceManager.lookup(request);
-
-                Object result = serviceInvoker.invoker(serviceInstance, request);
-                response.setData(result);
-
+                byte[] outBytes = encoder.encode(response);
+                toResponse.write(outBytes);
+                log.info("response client");
             } catch (IOException e) {
                 log.warn(e.getMessage(), e);
-                response.setCode(1);
-                response.setMessage("RpcServer got error: " + e.getClass().getName() + " " + e.getMessage());
-            } finally {
-                try {
-                    byte[] outBytes = encoder.encode(response);
-                    toResponse.write(outBytes);
-                    log.info("response client");
-                } catch (IOException e) {
-                    log.warn(e.getMessage(), e);
-                }
             }
         }
     };
@@ -66,7 +68,7 @@ public class RpcServer {
 
         // net
         this.net = ReflectionUtils.newInstance(config.getTransportServerClass());
-        this.net.init(config.getPort(),this.handler);
+        this.net.init(config.getPort(), this.handler);
 
         // codec
         this.encoder = ReflectionUtils.newInstance(config.getEncoderClass());
@@ -77,6 +79,13 @@ public class RpcServer {
         this.serviceInvoker = new ServiceInvoker();
     }
 
+    /**
+     * 服务注册
+     *
+     * @param interfaceClass 服务代理类
+     * @param bean           服务实现类
+     * @param <T>            服务代理类
+     */
     public <T> void register(Class<T> interfaceClass, T bean) {
         serviceManager.register(interfaceClass, bean);
     }

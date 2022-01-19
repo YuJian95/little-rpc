@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
- * 表示服务
+ * 表示服务描述
  *
  * @author yujian
  */
@@ -33,6 +33,13 @@ public class ServiceDescriptor {
      */
     private String[] parameterTypes;
 
+    /**
+     * 获取服务描述
+     *
+     * @param clazz  服务类
+     * @param method 服务方法
+     * @return 服务描述
+     */
     public static ServiceDescriptor from(Class clazz, Method method) {
         ServiceDescriptor serviceDescriptor = new ServiceDescriptor();
 

@@ -94,17 +94,18 @@ public class RemoteInvoker implements InvocationHandler {
             throw new IllegalStateException("fail to invoke remote: " + response);
         }
 
+        log.info("invoke finish, response:{}", response);
         return response.getData();
     }
 
     private Response invokeRemote(Request request) {
         TransportClient client = null;
         Response response = null;
-        try {
-            client = selector.select();
 
-            byte[] outBytes = encoder.encode(request);
-            InputStream receive = client.write(new ByteArrayInputStream(outBytes));
+        byte[] outBytes = encoder.encode(request);
+        client = selector.select();
+
+        try (InputStream receive = client.write(new ByteArrayInputStream(outBytes))) {
 
             byte[] inBytes = IOUtils.readFully(receive, receive.available());
             response = decoder.decode(inBytes, Response.class);
@@ -114,9 +115,7 @@ public class RemoteInvoker implements InvocationHandler {
             response.setCode(1);
             response.setMessage("RpcClient got error: " + e.getClass() + " : " + e.getMessage());
         } finally {
-            if (client != null) {
-                selector.release(client);
-            }
+            selector.release(client);
         }
         return response;
     }

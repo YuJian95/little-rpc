@@ -1,7 +1,6 @@
 package cn.yujian95.rpc.demo;
 
 import cn.yujian95.rpc.RpcServer;
-import cn.yujian95.rpc.RpcServerConfig;
 import lombok.extern.slf4j.Slf4j;
 
 /**
