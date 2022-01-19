@@ -4,13 +4,13 @@
 
 ## 模块说明
 
-- little-rpc-client：客户端
-- little-rpc-codec：编码层
-- little-rpc-common：通用工具
-- little-rpc-demo：测试样例
-- little-rpc-proto：网络实体层
+- little-rpc-codec：序列化模块
+- little-rpc-common：通用模块
+- little-rpc-transport：网络传输模块
+- little-rpc-proto：协议模块
 - little-rpc-server: 服务端
-- little-rpc-transport：网络传输层
+- little-rpc-client：客户端
+- little-rpc-demo：测试样例
 
 ## 开发过程
 
